@@ -6,3 +6,14 @@ Presence detection using Bluetooth Low Energy with Arduino Nano 33 IoT reporting
 ## Dependencies
 * WiFiNINA.h (by Arduino) 1.8.9
 * PubSubClient.h (by Nick O'Leary) 2.8.0
+
+## Approach
+
+The MCU uses an ESP32 module to have access to WiFi and Bluetooth Low Energy.
+
+Since both operate on the 2.42GHz band, the same module re-uses the antenna to provide one or the other **BUT NEVER BOTH AT THE SAME TIME**.
+
+To address this issue, this sketch assumes a 10 second device scanning cycle and afterwards it just reports the device count to the MQTT server.
+
+
+Feel free to customize your sketch by providing your own `config.h` file with your own parameters.
