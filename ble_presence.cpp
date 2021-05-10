@@ -3,7 +3,7 @@
 /**
  * Initializes the module
  */
-void ble_setup(BLEDeviceEventHandler eventHandler) 
+void ble_start(BLEDeviceEventHandler eventHandler) 
 {
     assert(BLE.begin(), "BLE initialization failed");
     BLE.setEventHandler(BLEDiscovered, eventHandler);
@@ -17,4 +17,9 @@ void ble_setup(BLEDeviceEventHandler eventHandler)
 void ble_loop() 
 {
     BLE.poll();
+}
+
+void ble_stop()
+{
+    BLE.stopScan();
 }

@@ -13,21 +13,23 @@
 // In seconds!
 #define SCAN_INTERVAL 10
 
+// Operation modes
+#define MODE_SCANNING 0
+#define MODE_REPORTING 1
+
 void uploadPresenceReport();
-void scanBLE();
-// TODOOOOO!!! WE CAN'T USE THE BLE AND WIFI AT THE SAME TIME!!!!
-Timer presenceScanner(SECONDS(SCAN_INTERVAL), scanBLE);
-Timer presenceReporter(SECONDS(SCAN_INTERVAL), uploadPresenceReport);
+void detectPresence();
+
+
 std::set<BLEDevice> scannedDevices;
 PresenceReporter* reporter = NULL;
+
+unsigned int OPERATION_MODE = MODE_SCANNING;
 
 void setup()
 {
     awaitSerialReady(Serial, BAUD_RATE);
-    ble_setup(on_device_discovered);
-    delay(100);
-    
-    /*reporter = PresenceReporter::instance(
+    reporter = PresenceReporter::instance(
         ssid,
         password,
         mqttServer,
@@ -35,29 +37,49 @@ void setup()
         mqttPassword,
         mqttPort
     );
-    reporter->connect();*/
     delay(100);
     log("presence detector is running...");
-    presenceReporter.start();
 }
 
 void loop()
 {
-    ble_loop();
-
-    presenceReporter.tick();
-
-    //reporter->ensureConnected();
+    if (OPERATION_MODE == MODE_SCANNING)
+    {
+        detectPresence();
+    }
+    else
+    {
+        uploadPresenceReport();
+        // Go back to scanning mode
+        OPERATION_MODE = MODE_SCANNING;
+    }
 }
 
-
-void scanBLE() {
-  
+void detectPresence()
+{
+    log("Starting BLE scan cycle...");
+    ble_start([](BLEDevice peri) {
+        scannedDevices.insert(peri);
+    });
+    Timer switchToReportingMode(SECONDS(10), [](){
+        OPERATION_MODE = MODE_REPORTING;
+    });
+    switchToReportingMode.start();
+    // Await 10 seconds have passed
+    while(OPERATION_MODE == MODE_SCANNING) {
+        ble_loop();
+        switchToReportingMode.tick();
+    }
+    ble_stop();
+    log("BLE scan cycle finished!");
 }
 
 
 void uploadPresenceReport()
 {
+    reporter->connect();
+    reporter->ensureConnected();
+
     auto totalDevices = String(scannedDevices.size(), DEC);
     String msg = 
       "Detected " 
@@ -66,7 +88,9 @@ void uploadPresenceReport()
       + String(SCAN_INTERVAL, DEC) + " seconds";
     log(msg);
 
-    //reporter->publish(mqttTopic, totalDevices);
+    reporter->publish(mqttTopic, totalDevices);
+
+    reporter->disconnect();
     
 
     #ifdef LOG_DEVICES 
@@ -75,9 +99,4 @@ void uploadPresenceReport()
     }
     #endif 
     scannedDevices.clear();
-}
-
-void on_device_discovered(BLEDevice peripheral)
-{
-  scannedDevices.insert(peripheral);
 }

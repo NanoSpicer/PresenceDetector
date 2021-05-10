@@ -14,6 +14,8 @@ class PresenceReporter
     bool connectMQTT();
     bool reconnectWifi();
     bool reconnectMQTT();
+
+    void disconnect();
     
     static PresenceReporter* instance(
       String wifiSSID, String wifiPWD, 

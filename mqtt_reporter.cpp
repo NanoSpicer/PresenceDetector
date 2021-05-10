@@ -15,6 +15,12 @@ void PresenceReporter::connect()
     connectMQTT();
 }
 
+void PresenceReporter::disconnect()
+{
+    mqtt.disconnect();
+    WiFi.end();
+}
+
 void PresenceReporter::ensureConnected()
 {
     
