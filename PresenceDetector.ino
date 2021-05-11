@@ -10,8 +10,7 @@
 
 #define BAUD_RATE 115200
 #define SECONDS(number) number*1000L
-// In seconds!
-#define SCAN_INTERVAL 10
+
 
 // Operation modes
 #define MODE_SCANNING 0
@@ -30,14 +29,13 @@ void setup()
 {
     awaitSerialReady(Serial, BAUD_RATE);
     reporter = PresenceReporter::instance(
-        ssid,
-        password,
-        mqttServer,
-        mqttUsername,
-        mqttPassword,
-        mqttPort
+        WIFI_SSID,
+        WIFI_PASSWORD,
+        MQTT_SERVER_IP,
+        MQTT_USERNAME,
+        MQTT_PASSWORD,
+        MQTT_PORT
     );
-    delay(100);
     log("presence detector is running...");
 }
 
@@ -61,7 +59,7 @@ void detectPresence()
     ble_start([](BLEDevice peri) {
         scannedDevices.insert(peri);
     });
-    Timer switchToReportingMode(SECONDS(10), [](){
+    Timer switchToReportingMode(SECONDS(SCAN_INTERVAL_SECONDS), []() {
         OPERATION_MODE = MODE_REPORTING;
     });
     switchToReportingMode.start();
@@ -85,10 +83,10 @@ void uploadPresenceReport()
       "Detected " 
       + totalDevices
       + " devices during the past " 
-      + String(SCAN_INTERVAL, DEC) + " seconds";
+      + String(SCAN_INTERVAL_SECONDS, DEC) + " seconds";
     log(msg);
 
-    reporter->publish(mqttTopic, totalDevices);
+    reporter->publish(MQTT_TOPIC, totalDevices.c_str());
 
     reporter->disconnect();
     

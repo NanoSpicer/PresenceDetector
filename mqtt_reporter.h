@@ -7,7 +7,7 @@ class PresenceReporter
 {
   public:
     void connect();
-    bool publish(String topic, String payload);
+    bool publish(const char* topic, const char* payload);
 
     void ensureConnected();
     void connectWifi();
@@ -18,15 +18,15 @@ class PresenceReporter
     void disconnect();
     
     static PresenceReporter* instance(
-      String wifiSSID, String wifiPWD, 
-      String mqttServer, String mqttUsername, String mqttPassword,
+      const char* wifiSSID, const char* wifiPWD, 
+      const char* mqttServer, const char* mqttUsername, const char* mqttPassword,
       unsigned int port
     );
   private:
       static PresenceReporter* _instance;
       PresenceReporter(
-          String wifiSSID, String wifiPWD,
-          String mqttServer, String mqttUsername, String mqttPassword,
+          const char* wifiSSID, const char* wifiPWD,
+          const char* mqttServer, const char* mqttUsername, const char* mqttPassword,
           unsigned int port
       )
       {
@@ -37,11 +37,11 @@ class PresenceReporter
           this->mqttPassword = mqttPassword;
           this->mqttPort = port;
       }
-    String wifiSSID;
-    String wifiPWD;
-    String mqttServer;
-    String mqttUsername; 
-    String mqttPassword;
+    const char* wifiSSID;
+    const char* wifiPWD;
+    const char* mqttServer;
+    const char* mqttUsername; 
+    const char* mqttPassword;
     unsigned int mqttPort;
 
     WiFiClient wifiClient;

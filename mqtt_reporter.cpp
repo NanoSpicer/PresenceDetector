@@ -2,10 +2,10 @@
 
 PresenceReporter* PresenceReporter::_instance = nullptr;
 
-bool PresenceReporter::publish(String topic, String payload)
+bool PresenceReporter::publish(const char* topic, const char* payload)
 {
-    auto result = mqtt.publish(topic.c_str(), payload.c_str());
-    log(String((result ? "[SUCCESS]" : "[FAILURE]"))+" - " +mqttUsername+" -> published '" +payload+"' ON '"+topic+"'");
+    auto result = mqtt.publish(topic, payload);
+    log(String((result ? "[SUCCESS]" : "[FAILURE]"))+" - " +String(mqttUsername)+" -> published '" +String(payload)+"' ON '"+String(topic)+"'");
     return result;
 }
 
@@ -60,13 +60,13 @@ void PresenceReporter::connectWifi()
     auto wifi = WiFi;
     auto ssid = this->wifiSSID;
     auto wpwd = this->wifiPWD;
-    log("WiFi: connecting to " + ssid);
+    log("WiFi: connecting to " + String(ssid));
 
 
     bool isConnected = false;
 
     do {
-      isConnected = wifi.begin(ssid.c_str(), wpwd.c_str()) == WL_CONNECTED;
+      isConnected = wifi.begin(ssid, wpwd) == WL_CONNECTED;
       if(!isConnected) {
         Serial.print(".");
         delay(500);
@@ -89,15 +89,15 @@ bool PresenceReporter::reconnectWifi()
 bool PresenceReporter::connectMQTT()
 {
     mqtt.setClient(wifiClient);
-    mqtt.setServer(mqttServer.c_str(), mqttPort);
-    return mqtt.connect(mqttUsername.c_str());
+    mqtt.setServer(mqttServer, mqttPort);
+    return mqtt.connect(mqttUsername);
 }
 
 bool PresenceReporter::reconnectMQTT()
 {
     while(!mqtt.connected()) 
     {
-        if(!mqtt.connect(mqttUsername.c_str())){
+        if(!mqtt.connect(mqttUsername)){
           delay(5000);
         }
     }
@@ -105,8 +105,8 @@ bool PresenceReporter::reconnectMQTT()
 }
 
 PresenceReporter* PresenceReporter::instance(
-    String wifiSSID, String wifiPWD,
-    String mqttServer, String mqttUsername, String mqttPassword, unsigned int port)
+    const char* wifiSSID, const char* wifiPWD,
+    const char* mqttServer, const char* mqttUsername, const char* mqttPassword, unsigned int port)
 {
     if(!_instance) {
         PresenceReporter::_instance = new PresenceReporter(
