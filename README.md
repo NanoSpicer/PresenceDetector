@@ -1,14 +1,16 @@
-# Presence Detection (Arduino Nano 33 IoT)
-Presence detection using Bluetooth Low Energy with Arduino Nano 33 IoT reporting to a mosquitto server with MQTT.
+# Presence Detection 
+Presence detection using Bluetooth Low Energy with Arduino Nano 33 IoT reporting to a mosquitto server with MQTT hosted on a Raspberry Pi 4 running Telegraf and Grafana.
 
 <img src="https://store-cdn.arduino.cc/uni/catalog/product/cache/1/image/500x375/f8876a31b63532bbba4e781c30024a0a/a/b/abx00027_iso_1.jpg">
 
-## Dependencies
+
+## Arduino Nano 33 IoT
+### Dependencies
 * ArduinoBLE.h (by Arduino) 1.2.0
 * WiFiNINA.h (by Arduino) 1.8.9
 * PubSubClient.h (by Nick O'Leary) 2.8.0
 
-## Approach
+### Approach
 
 The MCU uses an ESP32 module to have access to WiFi and Bluetooth Low Energy.
 
