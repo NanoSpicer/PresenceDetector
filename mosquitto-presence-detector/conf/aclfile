@@ -1,0 +1,5 @@
+user iot-node
+topic write presence
+
+user iot-grafana
+topic read presence
