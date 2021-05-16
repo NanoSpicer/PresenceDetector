@@ -1,4 +1,4 @@
-# Presence Detection 
+# Presence Detection over TLS
 Presence detection using Bluetooth Low Energy with Arduino Nano 33 IoT reporting to a mosquitto server with MQTT hosted on a Raspberry Pi 4 running Telegraf and Grafana.
 
 
