@@ -90,15 +90,16 @@ bool PresenceReporter::connectMQTT()
 {
     mqtt.setClient(wifiClient);
     mqtt.setServer(mqttServer, mqttPort);
-    return mqtt.connect(mqttUsername);
+    return mqtt.connect(mqttUsername, mqttUsername, mqttPassword);
 }
 
 bool PresenceReporter::reconnectMQTT()
 {
     while(!mqtt.connected()) 
     {
-        if(!mqtt.connect(mqttUsername)){
-          delay(5000);
+        if(!mqtt.connect(mqttUsername, mqttUsername, mqttPassword)){
+            Serial.print(".");
+            delay(5000);
         }
     }
     return mqtt.connected();

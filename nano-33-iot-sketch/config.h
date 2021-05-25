@@ -4,5 +4,6 @@
 #define MQTT_USERNAME "Nano 33 IoT"
 #define MQTT_PASSWORD "pass"
 #define MQTT_TOPIC "room-devices"
-#define MQTT_PORT 1883
+#define MQTT_PORT 8883
 #define SCAN_INTERVAL_SECONDS 10
+#define SERIAL_LOGS true

@@ -1,4 +1,5 @@
 #include "./utils.h"
+#include "./config.h"
 #define __str(x) String(x)
 
 void assert(int precondition, String message){
@@ -11,7 +12,10 @@ void assert(int precondition, String message){
 }
 
 void log(String msg) {
-    Serial.println(msg);
+    if(SERIAL_LOGS) {
+      Serial.println(msg);  
+    }
+    
 }
 
 void awaitSerialReady(Serial_ s, int baudrate){
