@@ -44,23 +44,21 @@ As mentioned in the first sections of this document, we can configure the creden
 This allows us to limit the access of the MQTT clients. This is useful in case the credentials of our node would have been compromised and an attacker would have tried to make malicious use of them. In our case, this attacker could only post in the `presence` topic without being able to subscribe to any other topic and in case we detected a strange behavior in the logs of our server, we can always revoke the credentials and send the attacker back to the starting point.
 
 
-### Dependencies
+## Sketch dependencies
 * ArduinoBLE.h (by Arduino) 1.2.0
 * WiFiNINA.h (by Arduino) 1.8.9
 * PubSubClient.h (by Nick O'Leary) 2.8.0
 
-### Approach
+## Approach
 
 The MCU uses an ESP32 module to have access to WiFi and Bluetooth Low Energy.
-
 Since both operate on the 2.42GHz band, the same module re-uses the antenna to provide one or the other **BUT NEVER BOTH AT THE SAME TIME**.
-
 To address this issue, this sketch assumes a 10 second device scanning cycle and afterwards it just reports the device count to the MQTT server.
 
 
 Feel free to customize your sketch by providing your own `config.h` file with your own parameters.
 
-### Configuring TLS on your Nano 33 IoT
+## Configuring TLS on your Nano 33 IoT
 
 1. Make sure your firmware is updated. To do so make sure you have the latest version of the WiFiNINA library by running the CheckFirmwareVersion sketch under File > Samples > WiFiNINA > Tools > CheckFirmwareVersion. (In your Arduino IDE)
 
