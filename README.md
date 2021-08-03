@@ -1,6 +1,60 @@
 # Presence Detection over TLS
 Presence detection using Bluetooth Low Energy with Arduino Nano 33 IoT reporting to a mosquitto server with MQTT hosted on a Raspberry Pi 4 running Telegraf and Grafana.
 
+## What is this supposed to do?
+
+Implements a presence detector with the Nano 33 IoT node reporting to a remote server hosten on a Raspberry Pi 4.
+
+
+## Things to take into consideration
+
+The MCU uses an ESP32 module to have access to WiFi and Bluetooth Low Energy.
+Since both operate on the 2.42GHz band, the same module re-uses the antenna to provide one or the other **BUT NEVER BOTH AT THE SAME TIME**.
+To address this issue, this sketch assumes a 10 second device scanning cycle and afterwards it just reports the device count to the MQTT server.
+
+
+Feel free to customize your sketch by providing your own `config.h` file with your own parameters.
+
+## The approach implemented in the Arduino sketch
+
+The sketch takes care of detecting all devices _advertising_ Bluetooth Low Energy packets from various sources such as smartbands or smartphones and collects some data from these devices.
+ 
+It stablishes 10 second time-frames where the device scans for BLE packets. Once the scanning phase is over we disconnect Bluetooth and connect to the WiFi network, _if available_, and report the different devices we've managed to count in the previous phase. Once that is done; rinse and repeat.
+
+The 10 second time-frames are stablish to cope with the problem that the board shared the same antenna to work as a WiFi or a Bluetooth module so we can't simultaenously use them. Just one or the other
+
+
+Every time we detect a new device we store it using a data-structure of the C++ standard library **std::set<BLEDevice>** which uses as key the MAC address of the newly detected device. This way we don't store repeated values: the set data-structure only takes unique entries which we'll identify by the MAC address.
+
+ 
+As we've already mentioned, the scanning time-frame is 10 seconds long and can be easily configured by modifying the C++ header file `config.h` where we can also configure: 
+1. SSID and WiFi password
+2. Authorization credentials of our MQTT user
+3. The IP address of our MQTT broker
+4. Disable logging to the serial port
+ 
+### Error handling
+In case any network errors occurr, the node will retry to connect to the WiFi network indefinetely. In any case: when accessing BLE or WiFi, the node will _busy-wait_ until the chip is ready to be used in order to avoid any possible cascading errors given to hardware not being completely initialized.
+
+## What is the technological stack on this?
+
+### Arduino Nano 33 IoT  
+* Arduino SDK 
+  * ArduinoBLE.h A library that eases access to the BLE
+  * WiFiNINA.h A library that eases access to the WiFi
+  * PubSubClient.h  A MQTT client that supports connections over TLS
+
+### Rasberry Pi 4
+* **Debian** (Raspbian, for ARM) 
+* **Mosquitto**, a MQTT broker that supports TLS connections
+* **InfluxDB**, a database management system focused on temporal series of data
+* **Telegraf**,  it is capable of way more,  but in this project acts as sink-client by subscribing to a topic and forwarding all publications in said topic to InfluxDB
+* **Grafana**, a data aggregation and visualization tool. In this project we use it to display data coming from InfluxDB. 
+
+## Sketch dependencies
+* ArduinoBLE.h (by Arduino) 1.2.0
+* WiFiNINA.h (by Arduino) 1.8.9
+* PubSubClient.h (by Nick O'Leary) 2.8.0
 
 
 ## Arduino Nano 33 IoT
@@ -42,21 +96,6 @@ could be to define a secret pin that in case it was bridged with VCC and hence a
 As mentioned in the first sections of this document, we can configure the credentials which our node will use to connect to the MQTT broker. This is because we make use of access control lists (ACL) on our `mosquitto`.
  
 This allows us to limit the access of the MQTT clients. This is useful in case the credentials of our node would have been compromised and an attacker would have tried to make malicious use of them. In our case, this attacker could only post in the `presence` topic without being able to subscribe to any other topic and in case we detected a strange behavior in the logs of our server, we can always revoke the credentials and send the attacker back to the starting point.
-
-
-## Sketch dependencies
-* ArduinoBLE.h (by Arduino) 1.2.0
-* WiFiNINA.h (by Arduino) 1.8.9
-* PubSubClient.h (by Nick O'Leary) 2.8.0
-
-## Approach
-
-The MCU uses an ESP32 module to have access to WiFi and Bluetooth Low Energy.
-Since both operate on the 2.42GHz band, the same module re-uses the antenna to provide one or the other **BUT NEVER BOTH AT THE SAME TIME**.
-To address this issue, this sketch assumes a 10 second device scanning cycle and afterwards it just reports the device count to the MQTT server.
-
-
-Feel free to customize your sketch by providing your own `config.h` file with your own parameters.
 
 ## Configuring TLS on your Nano 33 IoT
 
