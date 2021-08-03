@@ -81,7 +81,7 @@ Once you've done that, on your Arduino IDE do the following:
 
 And finally click "Upload Certificates to WiFi module" and we're done!
 
-### Configuring TLS on your server
+## Configuring TLS on your server
 
 Feel free to use the provided bash scripts to generate the CA and broker Certificates alongside their private keys. I've generated mine in my own Raspberry Pi 4
 
