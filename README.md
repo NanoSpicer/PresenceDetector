@@ -1,6 +1,8 @@
 # Presence Detection over TLS
 Presence detection using Bluetooth Low Energy with Arduino Nano 33 IoT reporting to a mosquitto server with MQTT hosted on a Raspberry Pi 4 running Telegraf and Grafana.
 
+<img src="https://store-cdn.arduino.cc/uni/catalog/product/cache/1/image/500x375/f8876a31b63532bbba4e781c30024a0a/a/b/abx00027_iso_1.jpg">
+
 ## What is this supposed to do?
 
 Implements a presence detector with the Nano 33 IoT node reporting to a remote server hosten on a Raspberry Pi 4.
@@ -56,10 +58,6 @@ In case any network errors occurr, the node will retry to connect to the WiFi ne
 * WiFiNINA.h (by Arduino) 1.8.9
 * PubSubClient.h (by Nick O'Leary) 2.8.0
 
-
-## Arduino Nano 33 IoT
-
-<img src="https://store-cdn.arduino.cc/uni/catalog/product/cache/1/image/500x375/f8876a31b63532bbba4e781c30024a0a/a/b/abx00027_iso_1.jpg">
 
 ## Securing this application
 
